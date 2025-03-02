@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:test_learn/widget/user_profile_state.dart';
+import 'package:test_learn/widgets/user_profile_state.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -40,22 +40,30 @@ class _HomePageState extends State<_HomePage> {
       appBar: AppBar(
         title: const Text('InheritedWidget'),
       ),
-      body: UserProfileState(
-          child: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              HeaderWidget(),
-              Expanded(
-                child: UserView(),
-              ),
-              BottomWidget(),
-              Spacer(flex: 1,),
-            ],
-          )),
-          name: _userName,
-          updateName: _changeUserName),
+      body: UserProfileState(name: _userName, updateName: _changeUserName, child: _BodyView()),
     );
+  }
+}
+
+class _BodyView extends StatelessWidget {
+  const _BodyView();
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        HeaderWidget(),
+        Expanded(
+          child: UserView(),
+        ),
+        BottomWidget(),
+        Spacer(
+          flex: 1,
+        ),
+      ],
+    ));
   }
 }
 
@@ -75,9 +83,10 @@ class BottomWidget extends StatelessWidget {
     );
   }
 }
+
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     String? userName = UserProfileState.of(context)?.name;
