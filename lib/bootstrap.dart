@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:test_learn/widget/user_profile_state.dart';
+import 'package:test_learn/widgets/user_profile_state.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -9,8 +9,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("building myapp");
-    return MaterialApp(
-      home: _HomePage(),
+    return UserStateWidget(
+      child: MaterialApp(
+        home: _HomePage(),
+      ),
     );
   }
 }
@@ -23,16 +25,6 @@ class _HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<_HomePage> {
-  // 用户名
-  String _userName = '未登录';
-
-  // 修改用户名
-  void _changeUserName(String userName) {
-    setState(() {
-      _userName = userName;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     print("building home");
@@ -40,22 +32,30 @@ class _HomePageState extends State<_HomePage> {
       appBar: AppBar(
         title: const Text('InheritedWidget'),
       ),
-      body: UserProfileState(
-          child: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              HeaderWidget(),
-              Expanded(
-                child: UserView(),
-              ),
-              BottomWidget(),
-              Spacer(flex: 1,),
-            ],
-          )),
-          name: _userName,
-          updateName: _changeUserName),
+      body: _BodyView(),
     );
+  }
+}
+
+class _BodyView extends StatelessWidget {
+  const _BodyView();
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        HeaderWidget(),
+        Expanded(
+          child: UserView(),
+        ),
+        BottomWidget(),
+        Spacer(
+          flex: 1,
+        ),
+      ],
+    ));
   }
 }
 
@@ -75,9 +75,10 @@ class BottomWidget extends StatelessWidget {
     );
   }
 }
+
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     String? userName = UserProfileState.of(context)?.name;
@@ -139,6 +140,35 @@ class _UserViewState extends State<UserView> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class UserStateWidget extends StatefulWidget {
+  const UserStateWidget({super.key, required this.child});
+  final Widget child;
+  @override
+  State<UserStateWidget> createState() => _UserStateWidgetState();
+}
+
+class _UserStateWidgetState extends State<UserStateWidget> {
+  // 用户名
+  String _userName = '未登录';
+
+  // 修改用户名
+  void _changeUserName(String userName) {
+    setState(() {
+      _userName = userName;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("rebuilding user state");
+    return UserProfileState(
+      name: _userName,
+      updateName: _changeUserName,
+      child: widget.child,
     );
   }
 }
